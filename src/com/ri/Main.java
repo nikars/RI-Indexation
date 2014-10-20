@@ -1,8 +1,16 @@
 package com.ri;
 
+import java.awt.*;
+
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        // Abrir GUI
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MainWindow mainWindow = new MainWindow();
+            }
+        });
     }
 }
