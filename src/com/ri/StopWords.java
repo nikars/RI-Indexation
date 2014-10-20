@@ -1,8 +1,7 @@
 package com.ri;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Nikolai on 20/10/2014.
@@ -11,20 +10,39 @@ public class StopWords {
     private Map<String, Object> spanish = new HashMap<String, Object>();
     private Map<String, Object> english = new HashMap<String, Object>();
 
-    public Map<String, Object> getSpanish() {
-        return spanish;
-    }
-
-    public Map<String, Object> getEnglish() {
-        return english;
-    }
-
     public StopWords() {
         File spanishWords = new File("res/palabras_vacias.txt");
         File englishWords = new File("res/stop_words.txt");
 
         addWords(spanish, spanishWords);
-        addWords(english, spanishWords);
+        addWords(english, englishWords);
+    }
+
+    public String removeSpanishStopWords(String text) {
+        return removeWords(text, spanish);
+    }
+
+    public String removeEnglishStopWords(String text) {
+        return removeWords(text, english);
+    }
+
+    private String removeWords(String text, Map map) {
+        List<String> words = new ArrayList<String>();
+        words.addAll(Arrays.asList(text.split("\\s")));
+
+        for (Iterator<String> iterator = words.iterator(); iterator.hasNext();) {
+            String word = iterator.next();
+            if (map.containsKey(word)) {
+                iterator.remove();
+            }
+        }
+
+        String clearText = "";
+
+        for (String s : words)
+            clearText += s + " ";
+
+        return clearText;
     }
 
     private void addWords(Map map, File file) {
