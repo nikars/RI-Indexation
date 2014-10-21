@@ -11,8 +11,8 @@ public class Index {
     private Map<String, Map<String, Integer>> index = new HashMap<String, Map<String, Integer>>();
 
     public void indexDocument(Document doc) {
-        for (String token : doc.tokens) {
-            indexToken(doc.id, token);
+        for (String token : doc.getTokens()) {
+            indexToken(doc.getId(), token);
         }
     }
 
@@ -23,7 +23,6 @@ public class Index {
         while (iterator.hasNext()) {
             Map.Entry pairs = (Map.Entry)iterator.next();
             tokenTable.add(new Pair<String, Integer>(pairs.getKey().toString(), ((Map<String, Integer>)pairs.getValue()).size()));
-//            iterator.remove(); // avoids a ConcurrentModificationException
         }
 
         return tokenTable;
@@ -39,36 +38,35 @@ public class Index {
         return numberOfDocuments;
     }
 
-    public int getTotalOccurrencess(String token) {
+    public int getTotalOccurrences(String token) {
         int numberOfOccurrences = 0;
         Map<String, Integer> occurrences = index.get(token);
 
-
-
-        Iterator iterator = index.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pairs = (Map.Entry) iterator.next();
-            numberOfOccurrences += (Integer) pairs.getValue();
-//            iterator.remove(); // avoids a ConcurrentModificationException
+        if(occurrences != null) {
+            Iterator iterator = occurrences.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry pairs = (Map.Entry)iterator.next();
+                numberOfOccurrences += (Integer)pairs.getValue();
+            }
         }
 
         return numberOfOccurrences;
     }
 
-    private void indexToken(String document, String token) {
+    private void indexToken(String documentId, String token) {
         Map<String, Integer> occurrences = index.get(token);
 
         if(occurrences != null) { // Está en el índice
-            Integer currentDocumentFrequency = occurrences.get(document);
+            Integer currentDocumentFrequency = occurrences.get(documentId);
 
             if(currentDocumentFrequency != null) // Está en el índice en el mismo documento
-                currentDocumentFrequency ++;
+                occurrences.put(documentId, ++currentDocumentFrequency);
             else
-                occurrences.put(document, 1);
+                occurrences.put(documentId, 1);
         } else { //No está en el índice
             occurrences = new HashMap<String, Integer>();
 
-            occurrences.put(document, 1);
+            occurrences.put(documentId, 1);
             index.put(token, occurrences);
         }
     }
