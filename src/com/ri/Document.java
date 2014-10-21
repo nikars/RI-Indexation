@@ -1,6 +1,9 @@
 package com.ri;
 
+import org.apache.tika.language.LanguageIdentifier;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -11,9 +14,14 @@ public class Document {
     private List<String> tokens = new ArrayList<String>();
     private String language;
 
-    public Document (String id, List<String> tokens) {
+    public Document (String id, String text) {
         this.id = id;
-        this.tokens = tokens;
+
+        LanguageIdentifier langIdent = new LanguageIdentifier(text);
+        language = langIdent.getLanguage();
+
+        // Eliminamos los signos de puntuación y pasamos las palabras a minúsculas
+        tokens = new ArrayList<String>(Arrays.asList(text.replaceAll("[^\\p{L} ]", "").toLowerCase().split("\\s")));
     }
 
     public List<String> getTokens() {
