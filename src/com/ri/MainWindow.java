@@ -1,7 +1,5 @@
 package com.ri;
 
-import javafx.util.Pair;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,7 +26,7 @@ public class MainWindow extends JFrame {
     private List<File> files = new ArrayList<File>();
     private List<Document> collection = new ArrayList<Document>();
 
-    private static final String sampleDocument = "Como a a a a a a a entrada, tomaremos todos los documentos de un directorio (será nuestra" +
+    private static final String sampleDocument = "Como a a a a a a a entrada, tomaremos sureña área todos los documentos de un directorio (será nuestra" +
             "colección de documentos) y los procesaremos de forma que seamos capaces de" +
             "identificar los distintos tokens (una vez eliminados signos de puentuación) que" +
             "pasarán al proceso de indexación, contando para cada uno de ellos el número de" +
@@ -36,14 +34,7 @@ public class MainWindow extends JFrame {
             "las palabras vacías (en decsai podeis encontrar dos ficheros con las palabras" +
             "vacías en castellano e inglés).";
 
-    private static final String sampleDocument2 = "El objetivo de la a a a a a a a práctica es conocer los procesos claves en la creación de" +
-            "un índice para Recuperación de Información. Se debe trabajar en grupos de dos" +
-            "personas. En particular, nos centraremos en las primerasd fases de un proceso" +
-            "de indexación que nos permitirán analizar los documentos a indexar para extraer" +
-            "finalmente los tokens de indexación" +
-            "Al final de la práctica se debe entregar un informe que necesarimente debe" +
-            "incluir una sección denominada Trabajo en Grupo en el que se indicará de forma" +
-            "clara la contribución de cada alumno.";
+    private static final String sampleDocument2 = "Historically, stemmers have often been thought of as either dictionary-based or algorithmic. The presentation of studies of stemming in the literature has perhaps helped to create this division. In the Lovins’ stemmer the algorithmic description is central. In accounts of dictionary-based stemmers the emphasis tends to be on dictionary content and structure, and IR effectiveness. Savoy’s French stemmer (Savoy, 1993) is a good example of this. But the two approaches are not really distinct. An algorithmic stemmer can include long exception lists that are effectively mini-dictionaries, and a dictionary-based stemmer usually needs a process for removing at least i-suffixes to make the look-up in the dictionary possible. In fact in a language in which proper names are inflected (Latin, Finnish, Russian ...), a dictionary-based stemmer will need to remove i-suffixes independently of dictionary look-up, because the proper names will not of course be in the dictionary.";
 
     public MainWindow() {
         super("Recuperación de información. Práctica 1: Indexación");
@@ -76,8 +67,14 @@ public class MainWindow extends JFrame {
     }
 
     private void preprocessCollection() {
-        Document test = new Document("Test Document", new ArrayList<String>(Arrays.asList(sampleDocument.split("\\s"))));
-        Document test2 = new Document("Test Document 2", new ArrayList<String>(Arrays.asList(sampleDocument2.split("\\s"))));
+        Document test = new Document("Test Document", sampleDocument);
+        Document test2 = new Document("Test Document 2", sampleDocument2);
+
+        Preprocessor.removeStopWords(test);
+        Preprocessor.removeStopWords(test2);
+        Preprocessor.stemDocument(test);
+        Preprocessor.stemDocument(test2);
+
         collection.add(test);
         collection.add(test2);
     }
@@ -88,15 +85,14 @@ public class MainWindow extends JFrame {
     }
 
     private void search() {
-        String word = searchTextField.getText();
-        //TODO: Pass Snowball
+        String token = Preprocessor.stemQuery(searchTextField.getText(), "es");
 
-        int numberOfOcurrences = index.getTotalOccurrences(word);
+        int numberOfOcurrences = index.getTotalOccurrences(token);
         if(numberOfOcurrences == 0)
-            resultLabel.setText("El término " + "\'" + searchTextField.getText() + "\' no aparece en la colección");
+            resultLabel.setText("El token " + "\'" + token + "\' no aparece en la colección");
         else
-            resultLabel.setText("\'" + searchTextField.getText() + "\' aparece " + numberOfOcurrences +
-                    " veces en " + index.getNumberOfDocuments(word) + " documentos");
+            resultLabel.setText("\'" + token + "\' aparece " + numberOfOcurrences +
+                    " veces en " + index.getNumberOfDocuments(token) + " documentos");
 
     }
 
