@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
 /**
- * Created by Nikolai on 21/10/2014.
+ * Ventana con la tabla de tokens
  */
 public class TokenTable extends JFrame {
     private List<Pair<String, Integer>> tokenTable;
@@ -19,10 +19,10 @@ public class TokenTable extends JFrame {
         super("Tabla de tokens");
         tokenTable = table;
 
-        initializeGui();
+        initGui();
     }
 
-    private void initializeGui() {
+    private void initGui() {
         setLocationRelativeTo(null);
         setContentPane(rootPanel);
         fillTable();

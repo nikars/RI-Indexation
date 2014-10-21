@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Nikolai on 20/10/2014.
+ * Documento de la colección dividido en tokens
  */
 public class Document {
     private String id;
@@ -17,11 +17,11 @@ public class Document {
     public Document (String id, String text) {
         this.id = id;
 
-        LanguageIdentifier langIdent = new LanguageIdentifier(text);
-        language = langIdent.getLanguage();
+        LanguageIdentifier identifier = new LanguageIdentifier(text);
+        language = identifier.getLanguage();
 
         // Eliminamos los signos de puntuación y pasamos las palabras a minúsculas
-        tokens = new ArrayList<String>(Arrays.asList(text.replaceAll("[^\\p{L} ]", "").toLowerCase().split("\\s")));
+        tokens = new ArrayList<String>(Arrays.asList(text.replaceAll("[^\\p{L}\\p{N} ]", "").toLowerCase().split("\\s")));
     }
 
     public List<String> getTokens() {
@@ -34,9 +34,5 @@ public class Document {
 
     public String getLanguage() {
         return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 }

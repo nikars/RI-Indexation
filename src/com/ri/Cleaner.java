@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Nikolai on 20/10/2014.
+ * Eliminador de palabras vacías
  */
-public class StopWords {
+public class Cleaner {
     private Map<String, Object> spanish = new HashMap<String, Object>();
     private Map<String, Object> english = new HashMap<String, Object>();
 
-    public StopWords() {
+    public Cleaner() {
         File spanishWords = new File("res/palabras_vacias.txt");
         File englishWords = new File("res/stop_words.txt");
 
@@ -21,16 +21,16 @@ public class StopWords {
         addWords(english, englishWords);
     }
 
-    public void removeSpanishStopWords(List<String> tokenizedText) {
-        removeWords(tokenizedText, spanish);
+    public void removeSpanishStopWords(List<String> tokens) {
+        removeWords(tokens, spanish);
     }
 
-    public void removeEnglishStopWords(List<String> tokenizedText) {
-        removeWords(tokenizedText, english);
+    public void removeEnglishStopWords(List<String> tokens) {
+        removeWords(tokens, english);
     }
 
-    private void removeWords(List<String> tokenizedText, Map map) {
-        for (Iterator<String> iterator = tokenizedText.iterator(); iterator.hasNext();) {
+    private void removeWords(List<String> tokens, Map map) {
+        for (Iterator<String> iterator = tokens.iterator(); iterator.hasNext();) {
             String token = iterator.next();
             if (map.containsKey(token))
                 iterator.remove();

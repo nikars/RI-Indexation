@@ -5,14 +5,14 @@ import javafx.util.Pair;
 import java.util.*;
 
 /**
- * Created by Nikolai on 20/10/2014.
+ * Índice de documentos
  */
 public class Index {
     private Map<String, Map<String, Integer>> index = new HashMap<String, Map<String, Integer>>();
 
-    public void indexDocument(Document doc) {
-        for (String token : doc.getTokens()) {
-            indexToken(doc.getId(), token);
+    public void indexDocument(Document document) {
+        for (String token : document.getTokens()) {
+            indexToken(document.getId(), token);
         }
     }
 
@@ -22,7 +22,7 @@ public class Index {
         Iterator iterator = index.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry pairs = (Map.Entry)iterator.next();
-            tokenTable.add(new Pair<String, Integer>(pairs.getKey().toString(), ((Map<String, Integer>)pairs.getValue()).size()));
+            tokenTable.add(new Pair<String, Integer>(pairs.getKey().toString(), ((Map<String, Integer>) pairs.getValue()).size()));
         }
 
         return tokenTable;

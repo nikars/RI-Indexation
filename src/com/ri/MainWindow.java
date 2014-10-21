@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Nikolai on 20/10/2014.
+ * Ventana principal
  */
 public class MainWindow extends JFrame {
     private JPanel rootPanel;
@@ -32,7 +32,7 @@ public class MainWindow extends JFrame {
     private List<File> files = new ArrayList<File>();
     private List<Document> collection = new ArrayList<Document>();
 
-    private static final String sampleDocument = "Como a a a a a a a entrada, tomaremos sureña área todos los documentos de un directorio (será nuestra" +
+    private static final String sampleDocument = "Como a a a a a a a entrada, tomaremos 4 4 5 sureña área todos los documentos de un directorio (será nuestra" +
             "colección de documentos) y los procesaremos de forma que seamos capaces de" +
             "identificar los distintos tokens (una vez eliminados signos de puentuación) que" +
             "pasarán al proceso de indexación, contando para cada uno de ellos el número de" +
@@ -43,8 +43,8 @@ public class MainWindow extends JFrame {
     private static final String sampleDocument2 = "Historically, stemmers have often been thought of as either dictionary-based or algorithmic. The presentation of studies of stemming in the literature has perhaps helped to create this division. In the Lovins’ stemmer the algorithmic description is central. In accounts of dictionary-based stemmers the emphasis tends to be on dictionary content and structure, and IR effectiveness. Savoy’s French stemmer (Savoy, 1993) is a good example of this. But the two approaches are not really distinct. An algorithmic stemmer can include long exception lists that are effectively mini-dictionaries, and a dictionary-based stemmer usually needs a process for removing at least i-suffixes to make the look-up in the dictionary possible. In fact in a language in which proper names are inflected (Latin, Finnish, Russian ...), a dictionary-based stemmer will need to remove i-suffixes independently of dictionary look-up, because the proper names will not of course be in the dictionary.";
 
     public MainWindow() {
-        super("Recuperación de información. Práctica 1: Indexación");
-        initializeGui();
+        super("Recuperación de Información. Práctica 1: Indexación");
+        initGui();
 
         index = new Index();
     }
@@ -55,28 +55,29 @@ public class MainWindow extends JFrame {
     
     private void loadCollection() {
         collectionName = "Sample";
-    }
 
-    private void preprocessCollection() {
         Document test = new Document("Test Document", sampleDocument);
         Document test2 = new Document("Test Document 2", sampleDocument2);
 
-        Preprocessor.removeStopWords(test);
-        Preprocessor.removeStopWords(test2);
-        Preprocessor.stemDocument(test);
-        Preprocessor.stemDocument(test2);
-
         collection.add(test);
-//        collection.add(test2);
+        collection.add(test2);
+    }
+
+    private void preprocessCollection() {
+        for(Document document : collection) {
+            Preprocessor.removeStopWords(document);
+            Preprocessor.stemDocument(document);
+        }
     }
     
     private void indexCollection() {
-        for (Document doc : collection)
-            index.indexDocument(doc);
+        for (Document document : collection)
+            index.indexDocument(document);
     }
 
     private void search() {
         String token = Preprocessor.stemQuery(searchTextField.getText(), spanishRadioButton.isSelected() ? "es" : "en");
+
         if(token == null || token.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Introduzca un término.");
             return;
@@ -88,7 +89,6 @@ public class MainWindow extends JFrame {
         else
             resultLabel.setText("\'" + token + "\' aparece " + numberOfOcurrences +
                     " veces en " + index.getNumberOfDocuments(token) + " documentos");
-
     }
 
     private void updateUiAfterLoad(boolean success) {
@@ -105,7 +105,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void initializeGui() {
+    private void initGui() {
         setLocationRelativeTo(null);
         setContentPane(rootPanel);
         initMenu();

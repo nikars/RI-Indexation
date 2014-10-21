@@ -7,42 +7,39 @@ import org.tartarus.snowball.ext.spanishStemmer;
 import java.util.List;
 
 /**
- * Created by Nikolai on 20/10/2014.
+ * Preprocesador de tokens
  */
 public class Preprocessor {
     public static void removeStopWords(Document document) {
-        StopWords stopWords = new StopWords();
+        Cleaner cleaner = new Cleaner();
 
-        if(document.getLanguage() != null) {
-            if (document.getLanguage().equals("es"))
-                stopWords.removeSpanishStopWords(document.getTokens());
-            else
-                stopWords.removeEnglishStopWords(document.getTokens());
-        }
+        if (document.getLanguage().equals("es"))
+            cleaner.removeSpanishStopWords(document.getTokens());
+        else if (document.getLanguage().equals("en"))
+            cleaner.removeEnglishStopWords(document.getTokens());
     }
 
     public static void stemDocument(Document document) {
-        if(document.getLanguage() != null) {
-            if (document.getLanguage().equals("es"))
-                stemDocuemntIn(document, new spanishStemmer());
-            else
-                stemDocuemntIn(document, new englishStemmer());
-        }
+        if (document.getLanguage().equals("es"))
+            stemDocumentIn(document, new spanishStemmer());
+        else if (document.getLanguage().equals("en"))
+            stemDocumentIn(document, new englishStemmer());
     }
 
     public static String stemQuery(String query, String language) {
         if (language.equals("es"))
             return stemQueryIn(query, new spanishStemmer());
-        else
+        else if (language.equals("en"))
             return stemQueryIn(query, new englishStemmer());
+        else return query;
     }
 
-    private static void stemDocuemntIn(Document document, SnowballStemmer stemmer) {
+    private static void stemDocumentIn(Document document, SnowballStemmer stemmer) {
         List<String> tokens = document.getTokens();
 
         for (int i = 0; i < tokens.size(); i++) {
             stemmer.setCurrent(tokens.get(i));
-            if(stemmer.stem())
+            if (stemmer.stem())
                 tokens.set(i, stemmer.getCurrent());
         }
     }

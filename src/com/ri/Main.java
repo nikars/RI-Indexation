@@ -2,10 +2,12 @@ package com.ri;
 
 import java.awt.*;
 
+/**
+ * Entrada de la aplicación. Inicializa la GUI
+ */
 public class Main {
 
     public static void main(String[] args) {
-        // Abrir GUI
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
