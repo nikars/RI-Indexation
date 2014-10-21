@@ -1,7 +1,10 @@
 package com.ri;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Nikolai on 20/10/2014.
@@ -18,31 +21,20 @@ public class StopWords {
         addWords(english, englishWords);
     }
 
-    public String removeSpanishStopWords(String text) {
-        return removeWords(text, spanish);
+    public void removeSpanishStopWords(List<String> tokenizedText) {
+        removeWords(tokenizedText, spanish);
     }
 
-    public String removeEnglishStopWords(String text) {
-        return removeWords(text, english);
+    public void removeEnglishStopWords(List<String> tokenizedText) {
+        removeWords(tokenizedText, english);
     }
 
-    private String removeWords(String text, Map map) {
-        List<String> words = new ArrayList<String>();
-        words.addAll(Arrays.asList(text.split("\\s")));
-
-        for (Iterator<String> iterator = words.iterator(); iterator.hasNext();) {
-            String word = iterator.next();
-            if (map.containsKey(word)) {
+    private void removeWords(List<String> tokenizedText, Map map) {
+        for (Iterator<String> iterator = tokenizedText.iterator(); iterator.hasNext();) {
+            String token = iterator.next();
+            if (map.containsKey(token))
                 iterator.remove();
-            }
         }
-
-        String clearText = "";
-
-        for (String s : words)
-            clearText += s + " ";
-
-        return clearText;
     }
 
     private void addWords(Map map, File file) {

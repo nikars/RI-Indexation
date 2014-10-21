@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,6 +19,13 @@ public class MainWindow extends JFrame {
     private JButton showTokensButton;
     private JLabel infoLabel;
     private JLabel resultLabel;
+    private JRadioButton spanishRadioButton;
+    private JRadioButton englishRadioButton;
+    private JMenuBar menubar;
+    private JMenu file;
+    private JMenuItem about;
+    private JMenuItem loadCollectionMenuItem;
+    private JMenuItem exitMenuItem;
 
     private String collectionName = "";
     private Index index;
@@ -38,28 +44,13 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         super("Recuperación de información. Práctica 1: Indexación");
-        setContentPane(rootPanel);
         initializeGui();
-        pack();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        setVisible(true);
-
-
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                search();
-            }
-        });
 
         index = new Index();
-        showTokensButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                TokenTable tokenTable = new TokenTable(index.getAllTokens());
-            }
-        });
+    }
+
+    private void addFiles() {
+
     }
     
     private void loadCollection() {
@@ -76,7 +67,7 @@ public class MainWindow extends JFrame {
         Preprocessor.stemDocument(test2);
 
         collection.add(test);
-        collection.add(test2);
+//        collection.add(test2);
     }
     
     private void indexCollection() {
@@ -85,7 +76,11 @@ public class MainWindow extends JFrame {
     }
 
     private void search() {
-        String token = Preprocessor.stemQuery(searchTextField.getText(), "es");
+        String token = Preprocessor.stemQuery(searchTextField.getText(), spanishRadioButton.isSelected() ? "es" : "en");
+        if(token == null || token.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Introduzca un término.");
+            return;
+        }
 
         int numberOfOcurrences = index.getTotalOccurrences(token);
         if(numberOfOcurrences == 0)
@@ -112,16 +107,46 @@ public class MainWindow extends JFrame {
 
     private void initializeGui() {
         setLocationRelativeTo(null);
-        JMenuBar menubar = new JMenuBar();
+        setContentPane(rootPanel);
+        initMenu();
+        initRadioButtons();
+        initListeners();
+        pack();
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setVisible(true);
+    }
 
-        JMenu file = new JMenu("Archivo");
-        JMenu about = new JMenu("Acerca de...");
+    private void initRadioButtons() {
+        spanishRadioButton.setSelected(true);
+        ButtonGroup group = new ButtonGroup();
+        group.add(spanishRadioButton);
+        group.add(englishRadioButton);
+    }
+
+    private void initMenu() {
+        menubar = new JMenuBar();
+        file = new JMenu("Archivo");
+        about = new JMenuItem("Acerca de...");
+
         file.setMnemonic(KeyEvent.VK_F);
         about.setMnemonic(KeyEvent.VK_A);
 
-        JMenuItem loadCollectionMenuItem = new JMenuItem("Cargar colección...");
+        loadCollectionMenuItem = new JMenuItem("Cargar colección...");
+        exitMenuItem = new JMenuItem("Salir");
+
         loadCollectionMenuItem.setMnemonic(KeyEvent.VK_O);
+        exitMenuItem.setMnemonic(KeyEvent.VK_E);
         loadCollectionMenuItem.setToolTipText("Cargar una colección de documentos desde un directorio");
+        exitMenuItem.setToolTipText("Salir del programa");
+
+        file.add(loadCollectionMenuItem);
+        file.add(exitMenuItem);
+        menubar.add(file);
+        menubar.add(about);
+        setJMenuBar(menubar);
+    }
+
+    private void initListeners() {
         loadCollectionMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -132,13 +157,33 @@ public class MainWindow extends JFrame {
             }
         });
 
-        file.add(loadCollectionMenuItem);
-        menubar.add(file);
-        menubar.add(about);
-        setJMenuBar(menubar);
-    }
-    
-    private void addFiles() {
-        
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                MainWindow.this.dispose();
+            }
+        });
+
+        about.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JOptionPane.showMessageDialog(MainWindow.this, "Nikolai Arsentiev\nAntonio Romero",
+                        "RI: Indexación", JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                search();
+            }
+        });
+
+        showTokensButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                TokenTable tokenTable = new TokenTable(index.getAllTokens());
+            }
+        });
     }
 }

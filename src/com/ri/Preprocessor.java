@@ -11,7 +11,14 @@ import java.util.List;
  */
 public class Preprocessor {
     public static void removeStopWords(Document document) {
+        StopWords stopWords = new StopWords();
 
+        if(document.getLanguage() != null) {
+            if (document.getLanguage().equals("es"))
+                stopWords.removeSpanishStopWords(document.getTokens());
+            else
+                stopWords.removeEnglishStopWords(document.getTokens());
+        }
     }
 
     public static void stemDocument(Document document) {
@@ -41,7 +48,7 @@ public class Preprocessor {
     }
 
     private static String stemQueryIn(String query, SnowballStemmer stemmer) {
-        stemmer.setCurrent(query);
+        stemmer.setCurrent(query.toLowerCase());
         return stemmer.stem() ? stemmer.getCurrent() : query;
     }
 }
