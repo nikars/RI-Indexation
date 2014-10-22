@@ -16,12 +16,12 @@ public class Index {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<Pair<String, Integer>> getAllTokens() {
         List<Pair<String, Integer>> tokenTable = new ArrayList<Pair<String, Integer>>();
 
-        Iterator iterator = index.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pairs = (Map.Entry)iterator.next();
+        for (Object entry : index.entrySet()) {
+            Map.Entry pairs = (Map.Entry) entry;
             tokenTable.add(new Pair<String, Integer>(pairs.getKey().toString(), ((Map<String, Integer>) pairs.getValue()).size()));
         }
 
@@ -43,10 +43,9 @@ public class Index {
         Map<String, Integer> occurrences = index.get(token);
 
         if(occurrences != null) {
-            Iterator iterator = occurrences.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry pairs = (Map.Entry)iterator.next();
-                numberOfOccurrences += (Integer)pairs.getValue();
+            for (Object entry : occurrences.entrySet()) {
+                Map.Entry pairs = (Map.Entry) entry;
+                numberOfOccurrences += (Integer) pairs.getValue();
             }
         }
 

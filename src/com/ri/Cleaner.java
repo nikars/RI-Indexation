@@ -37,6 +37,7 @@ public class Cleaner {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void addWords(Map map, File file) {
         FileReader fileReader = null;
         try {
@@ -45,12 +46,12 @@ public class Cleaner {
             e.printStackTrace();
         }
 
+        assert fileReader != null;
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
         try {
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null)
                 map.put(line, null);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
