@@ -10,11 +10,11 @@ import java.util.List;
  * Documento de la colección dividido en tokens
  */
 public class Document {
-    private String id;
+    private int id;
     private List<String> tokens = new ArrayList<String>();
     private String language;
 
-    public Document (String id, String text) {
+    public Document (int id, String text) {
         this.id = id;
 
         LanguageIdentifier identifier = new LanguageIdentifier(text);
@@ -28,7 +28,7 @@ public class Document {
         return tokens;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

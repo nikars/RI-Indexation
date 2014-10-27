@@ -8,7 +8,7 @@ import java.util.*;
  * Índice de documentos
  */
 public class Index {
-    private Map<String, Map<String, Integer>> index = new HashMap<String, Map<String, Integer>>();
+    private Map<String, Map<Integer, Integer>> index = new HashMap<String, Map<Integer, Integer>>();
 
     public void indexDocument(Document document) {
         for (String token : document.getTokens()) {
@@ -30,7 +30,7 @@ public class Index {
 
     public int getNumberOfDocuments(String token) {
         int numberOfDocuments = 0;
-        Map<String, Integer> occurrences = index.get(token);
+        Map<Integer, Integer> occurrences = index.get(token);
 
         if(occurrences != null) //Término está en el índice
             numberOfDocuments = occurrences.size();
@@ -40,7 +40,7 @@ public class Index {
 
     public int getTotalOccurrences(String token) {
         int numberOfOccurrences = 0;
-        Map<String, Integer> occurrences = index.get(token);
+        Map<Integer, Integer> occurrences = index.get(token);
 
         if(occurrences != null) {
             for (Object entry : occurrences.entrySet()) {
@@ -52,8 +52,8 @@ public class Index {
         return numberOfOccurrences;
     }
 
-    private void indexToken(String documentId, String token) {
-        Map<String, Integer> occurrences = index.get(token);
+    private void indexToken(int documentId, String token) {
+        Map<Integer, Integer> occurrences = index.get(token);
 
         if(occurrences != null) { // Está en el índice
             Integer currentDocumentFrequency = occurrences.get(documentId);
@@ -63,7 +63,7 @@ public class Index {
             else
                 occurrences.put(documentId, 1);
         } else { //No está en el índice
-            occurrences = new HashMap<String, Integer>();
+            occurrences = new HashMap<Integer, Integer>();
 
             occurrences.put(documentId, 1);
             index.put(token, occurrences);

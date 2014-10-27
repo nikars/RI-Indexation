@@ -49,19 +49,33 @@ public class MainWindow extends JFrame {
         index = new Index();
     }
 
-    private void addFiles() {
-
+    private void addFiles(File folder) {
+        for(File fileEntry: folder.listFiles()) {
+            if (fileEntry.isDirectory())
+                addFiles(fileEntry);
+            else
+                files.add(fileEntry);
+        }
     }
     
     private void loadCollection() {
         collectionName = "Sample";
+        Reader reader = new Reader();
 
-        Document test = new Document("Test Document", sampleDocument);
-        Document test2 = new Document("Test Document 2", sampleDocument2);
+        File folder = new File("C:\\Users\\Rome's\\Desktop\\U\\Grado\\4\\RI\\Datos Practicas\\cacm");
 
-        collection.add(test);
-        collection.add(test2);
+        addFiles(folder);
+
+        int fileId = 0;
+        for (File file : files) {
+
+            System.out.println(reader.readDocument(fileId, file).getLanguage());
+            collection.add(reader.readDocument(fileId, file));
+            fileId++;
+        }
     }
+
+
 
     private void preprocessCollection() {
         for(Document document : collection) {
