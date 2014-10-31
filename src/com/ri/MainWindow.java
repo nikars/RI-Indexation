@@ -21,8 +21,6 @@ public class MainWindow extends JFrame {
     private JLabel resultLabel;
     private JRadioButton spanishRadioButton;
     private JRadioButton englishRadioButton;
-    private JMenuBar menubar;
-    private JMenu file;
     private JMenuItem about;
     private JMenuItem loadCollectionMenuItem;
     private JMenuItem exitMenuItem;
@@ -31,16 +29,7 @@ public class MainWindow extends JFrame {
     private Index index;
     private List<File> files = new ArrayList<File>();
     private List<Document> collection = new ArrayList<Document>();
-
-    private static final String sampleDocument = "Como a a a a a a a entrada, tomaremos 4 4 5 sureña área todos los documentos de un directorio (será nuestra" +
-            "colección de documentos) y los procesaremos de forma que seamos capaces de" +
-            "identificar los distintos tokens (una vez eliminados signos de puentuación) que" +
-            "pasarán al proceso de indexación, contando para cada uno de ellos el número de" +
-            "documentos distintos en los que aparecen. Importante, en el proceso eliminaremos" +
-            "las palabras vacías (en decsai podeis encontrar dos ficheros con las palabras" +
-            "vacías en castellano e inglés).";
-
-    private static final String sampleDocument2 = "Historically, stemmers have often been thought of as either dictionary-based or algorithmic. The presentation of studies of stemming in the literature has perhaps helped to create this division. In the Lovins’ stemmer the algorithmic description is central. In accounts of dictionary-based stemmers the emphasis tends to be on dictionary content and structure, and IR effectiveness. Savoy’s French stemmer (Savoy, 1993) is a good example of this. But the two approaches are not really distinct. An algorithmic stemmer can include long exception lists that are effectively mini-dictionaries, and a dictionary-based stemmer usually needs a process for removing at least i-suffixes to make the look-up in the dictionary possible. In fact in a language in which proper names are inflected (Latin, Finnish, Russian ...), a dictionary-based stemmer will need to remove i-suffixes independently of dictionary look-up, because the proper names will not of course be in the dictionary.";
+    private boolean loadingSuccess = false;
 
     public MainWindow() {
         super("Recuperación de Información. Práctica 1: Indexación");
@@ -49,33 +38,46 @@ public class MainWindow extends JFrame {
         index = new Index();
     }
 
-    private void addFiles(File folder) {
-        for(File fileEntry: folder.listFiles()) {
-            if (fileEntry.isDirectory())
-                addFiles(fileEntry);
-            else
-                files.add(fileEntry);
-        }
-    }
-    
     private void loadCollection() {
-        collectionName = "Sample";
-        Reader reader = new Reader();
+        PlainTextReader plainTextReader = new PlainTextReader();
+        File directory = openDirectory();
+        if(directory != null) {
+            collectionName = directory.getName();
+            addFiles(directory);
 
-        File folder = new File("C:\\Users\\Rome's\\Desktop\\U\\Grado\\4\\RI\\Datos Practicas\\cacm");
-
-        addFiles(folder);
-
-        int fileId = 0;
-        for (File file : files) {
-
-            System.out.println(reader.readDocument(fileId, file).getLanguage());
-            collection.add(reader.readDocument(fileId, file));
-            fileId++;
-        }
+            int fileId = 0;
+            for (File file : files) {
+                collection.add(plainTextReader.readDocument(fileId, file));
+                fileId++;
+            }
+            loadingSuccess = true;
+        } else loadingSuccess = false;
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private void addFiles(File directory) {
+        if(directory != null) {
+            for (File fileEntry : directory.listFiles()) {
+                if (fileEntry.isDirectory())
+                    addFiles(fileEntry);
+                else
+                    files.add(fileEntry);
+            }
+        }
+        else updateUiAfterLoad(false);
+    }
 
+    private File openDirectory() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Cargar colección");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            return chooser.getSelectedFile();
+        else return null;
+    }
 
     private void preprocessCollection() {
         for(Document document : collection) {
@@ -85,8 +87,11 @@ public class MainWindow extends JFrame {
     }
     
     private void indexCollection() {
-        for (Document document : collection)
+        System.out.println(collection.size());
+        for (Document document : collection) {
             index.indexDocument(document);
+            System.out.println(document.getLanguage()); //TODO delete
+        }
     }
 
     private void search() {
@@ -126,7 +131,7 @@ public class MainWindow extends JFrame {
         initRadioButtons();
         initListeners();
         pack();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
@@ -138,8 +143,8 @@ public class MainWindow extends JFrame {
     }
 
     private void initMenu() {
-        menubar = new JMenuBar();
-        file = new JMenu("Archivo");
+        JMenuBar menubar  = new JMenuBar();
+        JMenu file = new JMenu("Archivo");
         about = new JMenuItem("Acerca de...");
 
         file.setMnemonic(KeyEvent.VK_F);
@@ -160,6 +165,7 @@ public class MainWindow extends JFrame {
         setJMenuBar(menubar);
     }
 
+    @SuppressWarnings("unused")
     private void initListeners() {
         loadCollectionMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -167,7 +173,7 @@ public class MainWindow extends JFrame {
                 loadCollection();
                 preprocessCollection();
                 indexCollection();
-                updateUiAfterLoad(true);
+                updateUiAfterLoad(loadingSuccess);
             }
         });
 

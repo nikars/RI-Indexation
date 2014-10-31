@@ -8,7 +8,7 @@ import java.util.*;
  * Índice de documentos
  */
 public class Index {
-    private Map<String, Map<Integer, Integer>> index = new HashMap<String, Map<Integer, Integer>>();
+    private Map<String, Map<Integer, Integer>> index = new LinkedHashMap<String, Map<Integer, Integer>>();
 
     public void indexDocument(Document document) {
         for (String token : document.getTokens()) {
