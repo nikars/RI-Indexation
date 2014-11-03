@@ -21,7 +21,7 @@ public class Document {
         language = identifier.getLanguage();
 
         // Eliminamos los signos de puntuación y pasamos las palabras a minúsculas
-        tokens = new ArrayList<String>(Arrays.asList(text.replaceAll("[^\\p{L}\\p{N} ]", "").toLowerCase().split("\\s")));
+        tokens = new ArrayList<String>(Arrays.asList(text.replaceAll("[^\\p{L}\\p{N}]", " ").toLowerCase().split("\\s")));
     }
 
     public List<String> getTokens() {
